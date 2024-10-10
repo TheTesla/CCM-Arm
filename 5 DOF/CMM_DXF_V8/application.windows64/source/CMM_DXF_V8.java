@@ -312,6 +312,10 @@ public void draw()
   //text("YOff: "+ YOff, width-100, 365);
   //text("ZOff: "+ ZOff, width-100, 380);
 
+  String[] ports = Serial.list();
+  fill(200);
+  text("Ports: "+ports.length,150,50);
+
 
   if (W0==true)
   {
@@ -940,10 +944,14 @@ class pointer
   PVector tip = new PVector(0, 0, 0);
   float rotation=0;
   boolean active=false;
-  boolean demoMode=false;        // = true for offline testing
+  boolean demoMode=true;        // = true for offline testing
+  
   pointer(PApplet p, int index)
   {
-    myPort =new Serial(p, Serial.list()[2], 19200); // Comment out for offline testing
+    String[] ports = Serial.list();
+    if(ports.length>0){
+      myPort =new Serial(p, Serial.list()[ports.length-1], 19200); // Comment out for offline testing
+    }
     active=true;
   }
 
@@ -951,9 +959,9 @@ class pointer
   {
     if (demoMode)
     {
-      // tip.x=(mouseX/2)-200;
-      // tip.y=(mouseY/-2)+300;
-      // tip.z=0;
+      tip.x=(mouseX/2)-200;
+      tip.y=(mouseY/-2)+300;
+      tip.z=0;
     } else
     {
       // tip.set(PX,PY,PZ);
@@ -961,6 +969,7 @@ class pointer
       tip.y=PY; 
       tip.z=PZ-Zheight; // Add to this value to move the pointer starting positon
     }
+
   }
 }
   public void settings() {  size(1200, 800, P3D); }
