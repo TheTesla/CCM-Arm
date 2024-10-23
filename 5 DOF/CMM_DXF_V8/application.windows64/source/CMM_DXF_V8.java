@@ -314,8 +314,15 @@ public void draw()
 
   String[] ports = Serial.list();
   fill(200);
-  text("Ports: "+ports.length,150,50);
-
+  text("Number of Ports: "+ports.length,150,50);
+  if (myPort!=null) {
+    text("Bytes available: "+myPort.available(),150,70);
+  } else {
+    if(ports.length>0){
+      myPort =new Serial(this, ports[ports.length-1], 9600); // Comment out for offline testing
+      myPort.setDTR(true);
+    } 
+  }
 
   if (W0==true)
   {
@@ -850,7 +857,7 @@ static final int one = 1;
 
 public void serialEvent(Serial myPort) 
 {
-  while (myPort.available ()>0)
+  while (myPort.available ()>10)
   {
     switch(rstate)
     {
@@ -950,7 +957,8 @@ class pointer
   {
     String[] ports = Serial.list();
     if(ports.length>0){
-      myPort =new Serial(p, Serial.list()[ports.length-1], 19200); // Comment out for offline testing
+      myPort =new Serial(p, ports[ports.length-1], 9600); // Comment out for offline testing
+      myPort.setDTR(true);
     }
     active=true;
   }

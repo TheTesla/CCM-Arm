@@ -65,9 +65,10 @@ template<int maxLinks> class KinematicChain
 {
     // A few variables used in the inverse kinematics defined here to save re-allocating them every time inverse kinematics is called
     Point deltaPose;
-    Matrix<3, 1> jacobian;
-    Matrix<maxLinks> deltaAngles;
+    BLA::Matrix<3, 1> jacobian;
+    BLA::Matrix<maxLinks> deltaAngles;
     Transformation currentPose, perturbedPose;
+    //Pose currentPose, perturbedPose;
 
     // The number of links addedto the chain via AddLink
     unsigned int noOfLinks;
@@ -96,7 +97,7 @@ template<int maxLinks> class KinematicChain
 
     //***********************
     // Transforms pose from the end effector coordinate frame to the base coordinate frame.
-    Transformation &ForwardKinematics(Transformation &pose)
+    Geometry::Pose &ForwardKinematics(Geometry::Pose &pose)
     {
       for (int i = noOfLinks - 1; i >= 0; i--)
       {
@@ -109,8 +110,8 @@ template<int maxLinks> class KinematicChain
       return pose;
     }
 
-    // Handy overload to save having to feed in a fresh Transformation every time
-    Transformation ForwardKinematics()
+    // Handy overload to save having to feed in a fresh Geometry::Pose every time
+    Geometry::Pose ForwardKinematics()
     {
       currentPose = Identity<4, 4>();
       return ForwardKinematics(currentPose);
