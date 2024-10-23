@@ -5,6 +5,11 @@
 //  Bryan Lord 2019
 //*************************************************
 
+
+// Dependencies:
+//  - BasicLinearAlgebra 2.2
+//  - Geometry 1.2
+
 #include "encoders.h"
 #include "math.h"
 #include "Geometry.h"
@@ -65,10 +70,9 @@ template<int maxLinks> class KinematicChain
 {
     // A few variables used in the inverse kinematics defined here to save re-allocating them every time inverse kinematics is called
     Point deltaPose;
-    BLA::Matrix<3, 1> jacobian;
-    BLA::Matrix<maxLinks> deltaAngles;
+    Matrix<3, 1> jacobian;
+    Matrix<maxLinks> deltaAngles;
     Transformation currentPose, perturbedPose;
-    //Pose currentPose, perturbedPose;
 
     // The number of links addedto the chain via AddLink
     unsigned int noOfLinks;
@@ -97,7 +101,7 @@ template<int maxLinks> class KinematicChain
 
     //***********************
     // Transforms pose from the end effector coordinate frame to the base coordinate frame.
-    Geometry::Pose &ForwardKinematics(Geometry::Pose &pose)
+    Transformation &ForwardKinematics(Transformation &pose)
     {
       for (int i = noOfLinks - 1; i >= 0; i--)
       {
@@ -110,8 +114,8 @@ template<int maxLinks> class KinematicChain
       return pose;
     }
 
-    // Handy overload to save having to feed in a fresh Geometry::Pose every time
-    Geometry::Pose ForwardKinematics()
+    // Handy overload to save having to feed in a fresh Transformation every time
+    Transformation ForwardKinematics()
     {
       currentPose = Identity<4, 4>();
       return ForwardKinematics(currentPose);
