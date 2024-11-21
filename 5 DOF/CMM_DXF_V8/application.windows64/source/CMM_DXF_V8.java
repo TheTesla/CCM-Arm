@@ -319,9 +319,13 @@ public void draw()
     text("Bytes available: "+myPort.available(),150,70);
   } else {
     if(ports.length>0){
-      myPort =new Serial(this, ports[ports.length-1], 19200); // Comment out for offline testing
+      myPort =new Serial(this, ports[ports.length-1], 19200);
       myPort.setDTR(true);
-    } 
+      digitizer.demoMode = false;
+    }
+  }
+  if(ports.length==0){
+     digitizer.demoMode = true;
   }
 
   if (W0==true)

@@ -21,22 +21,22 @@ IQencoder E0, E1, E2, E3, E4;
 //*************************************************
 //  Mechanical set up:
 //*************************************************
-#define ARM1 204       // Arm E0-E1 length[mm.] (Base to E1)
-#define ARM2 200.7       // Arm E1-E2 length[mm.]
-#define ARM3 238.278       // Arm E2-E4 length[mm.]
-#define ARM4 101.6025    // Stylis E4 to End-Effector
+#define ARM1 153.0       // Arm E0-E1 length[mm.] (Base to E1)
+#define ARM2 195.0       // Arm E1-E2 length[mm.]
+#define ARM3 219.0       // Arm E2-E4 length[mm.]
+#define ARM4 180.0    // Stylis E4 to End-Effector
 
 //Offsets from mechanical set-up:   ***************** These will likely not be used. Check to see if needed
-#define Z_OFFSET -45           // E1 axis height above table from Surface Plate (-52 if no plate) [204.02mm to Alum Base Plate.]
+#define Z_OFFSET 0           // E1 axis height above table from Surface Plate (-52 if no plate) [204.02mm to Alum Base Plate.]
 #define X_OFFSET 0           // Distance from E0 axis to preset position [0mm.] - Offset to fine tune where you want the X Origin
 #define Y_OFFSET 246         // Distance from E0 axis to preset position [250mm.] - Offset to fine tune where you want the Y Origin
 
 //Angles from mechanical set-up:
-#define E0_PRESET 183.5 // 183.75 / -85.95 / 175.95
-#define E1_PRESET 41.85 //42.9
-#define E2_PRESET -138 // -136.35
-#define E3_PRESET 0
-#define E4_PRESET 86.25 //87.15
+#define E0_PRESET 90.0 // 183.75 / -85.95 / 175.95
+#define E1_PRESET 110.0 //42.9
+#define E2_PRESET 120.0 // -136.35
+#define E3_PRESET 180.0
+#define E4_PRESET 90. //87.15
 
 //*************************************************
 //  Send coordinates to processing program
