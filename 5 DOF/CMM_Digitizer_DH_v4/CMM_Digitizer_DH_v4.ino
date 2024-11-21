@@ -159,16 +159,24 @@ class ImmobileJoint : public Link
 //*************************************************
 void setup()
 {
+  // enable encoders
+  pinMode(3, OUTPUT);
+  pinMode(2, OUTPUT);
+  digitalWrite(3, HIGH);
+  digitalWrite(2, HIGH);
+
+
+
   Serial.begin(19200);
 
   setEncoderRate(10000);
 
   //Attach encoders to match Kinematic Right Hand Rule:
-  E0.attach(9, 8);      //E0 (W,G)  Pivot
-  E1.attach(11, 10);    //E1 (W,G)  Shoulder
-  E2.attach(12, 13);    //E2 (G,W)  Elbow
-  E3.attach(7, 6);      //E3 (W,G)  Wrist
-  E4.attach(4, 5);      //E4 (G,W)  Indicator
+  E4.attach(5, 4);      //E0 (W,G)  Pivot
+  E3.attach(7, 6);    //E1 (W,G)  Shoulder
+  E2.attach(9, 8);    //E2 (G,W)  Elbow
+  E1.attach(11, 10);      //E3 (W,G)  Wrist
+  E0.attach(13, 12);      //E4 (G,W)  Indicator
 
 
   delay(10);            //-Allow time for encoders to settle
@@ -232,6 +240,7 @@ void loop()
   // Keeps Serial Coms from being overloaded. Sends coordinates after timer runs out
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis > 10)
+  //if (0)
   {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
@@ -258,7 +267,8 @@ void loop()
     sendFloat(Y_OFFSET, 'R');
     sendFloat(Z_OFFSET, 'T');
   }
-/*
+
+  if(0){
        Serial.print ("   *** E0: ");
       Serial.print(E0.getDegrees());
       Serial.print(",  E1: ");
@@ -270,5 +280,5 @@ void loop()
       Serial.print(",  E4: ");
       Serial.println(E4.getDegrees());
       //delay(100);
-*/
+    }
 }
