@@ -24,7 +24,7 @@ IQencoder E0, E1, E2, E3, E4;
 #define ARM1 153.0       // Arm E0-E1 length[mm.] (Base to E1)
 #define ARM2 195.0       // Arm E1-E2 length[mm.]
 #define ARM3 219.0       // Arm E2-E4 length[mm.]
-#define ARM4 180.0    // Stylis E4 to End-Effector
+#define ARM4 210.0    // Stylis E4 to End-Effector
 
 //Offsets from mechanical set-up:   ***************** These will likely not be used. Check to see if needed
 #define Z_OFFSET 0           // E1 axis height above table from Surface Plate (-52 if no plate) [204.02mm to Alum Base Plate.]
@@ -33,8 +33,8 @@ IQencoder E0, E1, E2, E3, E4;
 
 //Angles from mechanical set-up:
 #define E0_PRESET 90.0 // 183.75 / -85.95 / 175.95
-#define E1_PRESET 110.0 //42.9
-#define E2_PRESET 120.0 // -136.35
+#define E1_PRESET 90.0 //42.9
+#define E2_PRESET 90.0 // -136.35
 #define E3_PRESET 180.0
 #define E4_PRESET 90. //87.15
 
@@ -205,10 +205,12 @@ void loop()
 
   // Configure the links to give to the kinematic chain (d,Th,r,A)
   RevoluteJoint l1(ARM1, A, 0, M_PI_2);          // F1-0   --- Th0
-  RevoluteJoint l2(-18.82, B, ARM2, 0);          // F2-1   --- Th1  //-18.82
+  //RevoluteJoint l2(-18.82, B, ARM2, 0);          // F2-1   --- Th1  //-18.82
+  RevoluteJoint l2(0, B, ARM2, 0);          // F2-1   --- Th1  //-18.82
   RevoluteJoint l3(0, M_PI_2 + C, 0, M_PI_2);    // F3-2   --- Th2
   RevoluteJoint l4(ARM3, D, 0, M_PI_2);          // F4-3   --- Th3 (Wrist Angle)
-  RevoluteJoint l5(-18.82, M_PI_2 + E, ARM4, 0); // F5-4   --- Th4 -18.82
+  //RevoluteJoint l5(-18.82, M_PI_2 + E, ARM4, 0); // F5-4   --- Th4 -18.82
+  RevoluteJoint l5(0, M_PI_2 + E, ARM4, 0); // F5-4   --- Th4 -18.82
 
   // Add the Links to the chain and save end point for each link
   k.AddLink(l1);
