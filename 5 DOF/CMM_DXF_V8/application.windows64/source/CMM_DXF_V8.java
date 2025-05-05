@@ -117,6 +117,8 @@ object currentObject=null; //-Last created object
 //============================================================
 //  Draw
 //======================================================proce======
+int loop_cnt;
+int try_serial;
 
 public void draw()
 {
@@ -312,17 +314,63 @@ public void draw()
   //text("YOff: "+ YOff, width-100, 365);
   //text("ZOff: "+ ZOff, width-100, 380);
 
+  loop_cnt++;
+  if (loop_cnt > 1024) {
+    loop_cnt = 0;
+  } else if (loop_cnt < 0) {
+    loop_cnt = 0;
+  }
   String[] ports = Serial.list();
+  //printArray(ports);
   fill(200);
-  text("Number of Ports: "+ports.length,150,50);
-  if (myPort!=null) {
-    text("Bytes available: "+myPort.available(),150,70);
-  } else {
-    if(ports.length>0){
-      myPort =new Serial(this, ports[ports.length-1], 19200);
-      myPort.setDTR(true);
-      digitizer.demoMode = false;
+  String ports_str = "";
+  for (int i=0; i<ports.length; i++){
+    ports_str += ports[i] + ", ";
+  }
+  if (ports_str.length() > 2) {
+    ports_str = ports_str.substring(0, ports_str.length() - 2);
+  }
+  text("Available Serial Ports: "+ports_str,450,30);
+  if(ports.length>0){
+    if (digitizer.demoMode) {
+      text("Searching Device "+".".repeat(loop_cnt/15),150,30);
+      text("Demo Mode: Mouse input",150,45);
+    } else {
+      text("Connection established",150,30);
     }
+    text("Serial Port: "+ports[try_serial],310,30);
+    if (loop_cnt > 150) {
+      if (myPort!=null) {
+        myPort.stop();
+        myPort = null;
+      }
+      loop_cnt = 0;
+      try_serial++;
+      if (try_serial >= ports.length) {
+        try_serial = 0;
+      } else if (try_serial < 0) {
+        try_serial = 0;
+      }
+      try {
+        println("open port");
+        myPort =new Serial(this, ports[try_serial], 19200);
+        myPort.setDTR(true);
+      } catch (RuntimeException e) {
+        println(e);
+        loop_cnt = 500;
+      }
+    if (myPort!=null) {
+      digitizer.demoMode = true;
+      /*
+      try{
+        text("Bytes available: "+myPort.available(),150,70);
+      } catch(NullPointerException e) {
+        println(e);
+      }*/
+        
+  
+    }
+  } 
   }
   if(ports.length==0){
      digitizer.demoMode = true;
@@ -863,9 +911,11 @@ public void serialEvent(Serial myPort)
 {
   while (myPort.available ()>10)
   {
+    digitizer.demoMode = false;
     switch(rstate)
     {
     case zero:
+      loop_cnt = 0;
       datatype = myPort.readChar();
       if (datatype=='x'||datatype=='y'||datatype=='z'||datatype=='i'||datatype=='o'||datatype=='v'||datatype=='j'||datatype=='k'||datatype=='l'||datatype=='b'||datatype=='g'||datatype=='m'||datatype=='I'||datatype=='O'||datatype=='P'||datatype=='E'||datatype=='R'||datatype=='T')
       {
