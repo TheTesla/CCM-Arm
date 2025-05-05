@@ -5,6 +5,11 @@
 //  Bryan Lord 2019
 //*************************************************
 
+
+// Dependencies:
+//  - BasicLinearAlgebra 2.2
+//  - Geometry 1.2
+
 #include "encoders.h"
 #include "math.h"
 #include "Geometry.h"
@@ -16,22 +21,22 @@ IQencoder E0, E1, E2, E3, E4;
 //*************************************************
 //  Mechanical set up:
 //*************************************************
-#define ARM1 204       // Arm E0-E1 length[mm.] (Base to E1)
-#define ARM2 200.7       // Arm E1-E2 length[mm.]
-#define ARM3 238.278       // Arm E2-E4 length[mm.]
-#define ARM4 101.6025    // Stylis E4 to End-Effector
+#define ARM1 153.0       // Arm E0-E1 length[mm.] (Base to E1)
+#define ARM2 195.0       // Arm E1-E2 length[mm.]
+#define ARM3 219.0       // Arm E2-E4 length[mm.]
+#define ARM4 210.0    // Stylis E4 to End-Effector
 
 //Offsets from mechanical set-up:   ***************** These will likely not be used. Check to see if needed
-#define Z_OFFSET -45           // E1 axis height above table from Surface Plate (-52 if no plate) [204.02mm to Alum Base Plate.]
+#define Z_OFFSET 0           // E1 axis height above table from Surface Plate (-52 if no plate) [204.02mm to Alum Base Plate.]
 #define X_OFFSET 0           // Distance from E0 axis to preset position [0mm.] - Offset to fine tune where you want the X Origin
 #define Y_OFFSET 246         // Distance from E0 axis to preset position [250mm.] - Offset to fine tune where you want the Y Origin
 
 //Angles from mechanical set-up:
-#define E0_PRESET 183.5 // 183.75 / -85.95 / 175.95
-#define E1_PRESET 41.85 //42.9
-#define E2_PRESET -138 // -136.35
-#define E3_PRESET 0
-#define E4_PRESET 86.25 //87.15
+#define E0_PRESET 90.0 // 183.75 / -85.95 / 175.95
+#define E1_PRESET 90.0 //42.9
+#define E2_PRESET 90.0 // -136.35
+#define E3_PRESET 180.0
+#define E4_PRESET 90. //87.15
 
 //*************************************************
 //  Send coordinates to processing program
@@ -154,16 +159,24 @@ class ImmobileJoint : public Link
 //*************************************************
 void setup()
 {
+  // enable encoders
+  pinMode(3, OUTPUT);
+  pinMode(2, OUTPUT);
+  digitalWrite(3, HIGH);
+  digitalWrite(2, HIGH);
+
+
+
   Serial.begin(19200);
 
   setEncoderRate(10000);
 
   //Attach encoders to match Kinematic Right Hand Rule:
-  E0.attach(9, 8);      //E0 (W,G)  Pivot
-  E1.attach(11, 10);    //E1 (W,G)  Shoulder
-  E2.attach(12, 13);    //E2 (G,W)  Elbow
-  E3.attach(7, 6);      //E3 (W,G)  Wrist
-  E4.attach(4, 5);      //E4 (G,W)  Indicator
+  E4.attach(5, 4);      //E0 (W,G)  Pivot
+  E3.attach(7, 6);    //E1 (W,G)  Shoulder
+  E2.attach(9, 8);    //E2 (G,W)  Elbow
+  E1.attach(11, 10);      //E3 (W,G)  Wrist
+  E0.attach(13, 12);      //E4 (G,W)  Indicator
 
 
   delay(10);            //-Allow time for encoders to settle
@@ -192,10 +205,12 @@ void loop()
 
   // Configure the links to give to the kinematic chain (d,Th,r,A)
   RevoluteJoint l1(ARM1, A, 0, M_PI_2);          // F1-0   --- Th0
-  RevoluteJoint l2(-18.82, B, ARM2, 0);          // F2-1   --- Th1  //-18.82
+  //RevoluteJoint l2(-18.82, B, ARM2, 0);          // F2-1   --- Th1  //-18.82
+  RevoluteJoint l2(0, B, ARM2, 0);          // F2-1   --- Th1  //-18.82
   RevoluteJoint l3(0, M_PI_2 + C, 0, M_PI_2);    // F3-2   --- Th2
   RevoluteJoint l4(ARM3, D, 0, M_PI_2);          // F4-3   --- Th3 (Wrist Angle)
-  RevoluteJoint l5(-18.82, M_PI_2 + E, ARM4, 0); // F5-4   --- Th4 -18.82
+  //RevoluteJoint l5(-18.82, M_PI_2 + E, ARM4, 0); // F5-4   --- Th4 -18.82
+  RevoluteJoint l5(0, M_PI_2 + E, ARM4, 0); // F5-4   --- Th4 -18.82
 
   // Add the Links to the chain and save end point for each link
   k.AddLink(l1);
@@ -227,6 +242,7 @@ void loop()
   // Keeps Serial Coms from being overloaded. Sends coordinates after timer runs out
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis > 10)
+  //if (0)
   {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
@@ -253,7 +269,8 @@ void loop()
     sendFloat(Y_OFFSET, 'R');
     sendFloat(Z_OFFSET, 'T');
   }
-/*
+
+  if(0){
        Serial.print ("   *** E0: ");
       Serial.print(E0.getDegrees());
       Serial.print(",  E1: ");
@@ -265,5 +282,5 @@ void loop()
       Serial.print(",  E4: ");
       Serial.println(E4.getDegrees());
       //delay(100);
-*/
+    }
 }
