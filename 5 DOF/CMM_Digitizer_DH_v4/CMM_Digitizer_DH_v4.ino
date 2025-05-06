@@ -23,7 +23,7 @@ IQencoder E0, E1, E2, E3, E4;
 //*************************************************
 #define ARM1 153.0       // Arm E0-E1 length[mm.] (Base to E1)
 #define ARM2 195.0       // Arm E1-E2 length[mm.]
-#define ARM3 219.0       // Arm E2-E4 length[mm.]
+#define ARM3 230.0 //219.0       // Arm E2-E4 length[mm.]
 #define ARM4 210.0    // Stylis E4 to End-Effector
 
 //Offsets from mechanical set-up:   ***************** These will likely not be used. Check to see if needed

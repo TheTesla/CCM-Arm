@@ -126,7 +126,10 @@ SIGNAL(TIMER1_COMPA_vect)
       input |= 0x02;
     if (digitalRead(encoders[i]->Q_pin) == HIGH)
       input |= 0x01;
-    encoders[i]->encoderCounter += encref[encoders[i]->state][input];
+
+    int enc_tmp = encref[encoders[i]->state][input];
+    if (128==enc_tmp) enc_tmp = 0; // because during power up, non allowed state possible
+    encoders[i]->encoderCounter += enc_tmp;
     encoders[i]->state = input;
   }
 }
