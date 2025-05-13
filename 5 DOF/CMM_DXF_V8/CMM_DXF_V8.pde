@@ -33,7 +33,7 @@ PeasyCam cam;
 //============================================================
 //-Digitizer
 //============================================================
-pointer digitizer = new pointer(this, 0);
+pointer digitizer = new pointer(this);
 
 //============================================================
 //  GUI controls
@@ -289,7 +289,8 @@ void draw()
   //text("XOff: "+ XOff, width-100, 350);
   //text("YOff: "+ YOff, width-100, 365);
   //text("ZOff: "+ ZOff, width-100, 380);
-
+  
+  digitizer.auto_reconnect();
 
   if (W0==true)
   {

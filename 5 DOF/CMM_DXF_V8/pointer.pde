@@ -40,13 +40,18 @@ static final int zero = 0;
 static final int one = 1;
 
 
+
+
+
 void serialEvent(Serial myPort) 
 {
-  while (myPort.available ()>0)
+  while (myPort.available ()>10)
   {
+    digitizer.demoMode = false;
     switch(rstate)
     {
     case zero:
+      digitizer.reset_watchdog();
       datatype = myPort.readChar();
       if (datatype=='x'||datatype=='y'||datatype=='z'||datatype=='i'||datatype=='o'||datatype=='v'||datatype=='j'||datatype=='k'||datatype=='l'||datatype=='b'||datatype=='g'||datatype=='m'||datatype=='I'||datatype=='O'||datatype=='P'||datatype=='E'||datatype=='R'||datatype=='T')
       {
@@ -136,23 +141,82 @@ class pointer
   PVector tip = new PVector(0, 0, 0);
   float rotation=0;
   boolean active=false;
-  boolean demoMode=false;        // = true for offline testing
-  pointer(PApplet p, int index)
+  boolean demoMode=true;        // = true for offline testing
+  PApplet app;
+  int loop_cnt;
+  int try_serial;
+  
+  pointer(PApplet p)
   {
-    myPort =new Serial(p, Serial.list()[2], 19200); // Comment out for offline testing
+    app = p;
     active=true;
   }
 
-  void update()
-  {
-    if (demoMode)
-    {
-      // tip.x=(mouseX/2)-200;
-      // tip.y=(mouseY/-2)+300;
-      // tip.z=0;
-    } else
-    {
-      // tip.set(PX,PY,PZ);
+  void reset_watchdog() {
+    loop_cnt = 0;
+  }
+
+  void auto_reconnect() {
+    loop_cnt++;
+    if (loop_cnt > 1024) {
+      loop_cnt = 0;
+    } else if (loop_cnt < 0) {
+      loop_cnt = 0;
+    }
+    String[] ports = Serial.list();
+    fill(200);
+    String ports_str = "";
+    for (int i=0; i<ports.length; i++){
+      ports_str += ports[i] + ", ";
+    }
+    if (ports_str.length() > 2) {
+      ports_str = ports_str.substring(0, ports_str.length() - 2);
+    }
+    text("Available Serial Ports: "+ports_str,550,30);
+    if(ports.length>0) {
+      if (digitizer.demoMode) {
+        text("Searching Device "+".".repeat(loop_cnt/15),150,30);
+        text("Demo Mode: Mouse input",150,45);
+      } else {
+        text("Connection established",150,30);
+      }
+      text("Serial Port: "+ports[try_serial],310,30);
+      if (loop_cnt > 150) {
+        if (myPort!=null) {
+          myPort.stop();
+          myPort = null;
+        }
+        loop_cnt = 0;
+        try_serial++;
+        if (try_serial >= ports.length) {
+          try_serial = 0;
+        } else if (try_serial < 0) {
+          try_serial = 0;
+        }
+        try {
+          println("open port");
+          myPort =new Serial(app, ports[try_serial], 19200);
+          myPort.setDTR(true);
+        } catch (RuntimeException e) {
+          println(e);
+          loop_cnt = 500;
+        }
+        if (myPort!=null) {
+          demoMode = true;
+        }
+      }
+    }
+    if(ports.length==0){
+      demoMode = true;
+    }    
+  }
+
+  void update() {
+    if (demoMode) {
+      tip.x=(mouseX/2)-200;
+      tip.y=(mouseY/-2)+300;
+      tip.z=0;
+    } else {
       tip.x=PX;
       tip.y=PY; 
       tip.z=PZ-Zheight; // Add to this value to move the pointer starting positon
